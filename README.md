@@ -21,7 +21,7 @@ So far not so big a difference from regular static, but **smart-static** also su
 
 Currently these template engines are supported:
 
-- [smart-static-jade](http://github.com/trenskow/smart-static.jade.js)
+- [smart-static-jade](http://github.com/trenskow/smart-static-jade.js)
 - [smart-static-stylus](http://github.com/trenskow/smart-static-stylus.js)
 
 > See the readme of the individual repositories for more information.
@@ -68,8 +68,8 @@ This maps the structure as follows.
 
 If you do not want to cache in memory, these caching engines are currently available:
 
-- [smart-static-fs-cache](http://github.com/trenskow/smart-static-fs-cache)
-- [smart-static-redis-cache](http://github.com/trenskow/smart-static-redis-cache)
+- [smart-static-fs-cache](http://github.com/trenskow/smart-static-fs-cache.js)
+- [smart-static-redis-cache](http://github.com/trenskow/smart-static-redis-cache.js)
 
 Below is an example of how to use the file system engine.
 
