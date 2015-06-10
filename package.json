@@ -1,0 +1,26 @@
+{
+  "name": "smart-static",
+  "version": "0.1.0",
+  "description": "Like express.js static - but with template engine support.",
+  "author": "Kristian Trenskow <trenskow@me.com>",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/trenskow/smart-static.js"
+  },
+  "dependencies": {
+    "send": "^0.12.3",
+    "mime": "^1.3.4",
+    "merge": "^1.2.0",
+    "async": "^1.2.1"
+  },
+  "devDependencies": {
+    "mocha": "^2.2.5",
+    "chai": "^3.0.0",
+    "supertest": "^1.0.1"
+  },
+  "scripts": {
+    "test": "mocha test/*"
+  },
+  "license": "MIT"
+}
