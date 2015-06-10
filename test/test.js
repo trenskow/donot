@@ -123,9 +123,9 @@ describe('smart-static', function() {
 
     });
 
-    it ('should throw TypeError if renderer is not a function', function() {
+    it ('should throw TypeError if render is not a function', function() {
       expect(function() {
-        smartStatic.engine({map:{'.test':'.txt'}, compiler: function() {}, renderer: ''});
+        smartStatic.engine({map:{'.test':'.txt'}, compiler: function() {}, render: ''});
       }).to.throw(TypeError);
 
     });
