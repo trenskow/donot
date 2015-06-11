@@ -105,6 +105,6 @@ Default value: `[]`
 An array of engines to use. Alternative to using the `smartStatic.engine()` method.
 
 ## cache
-Default value: internal build-in memory cache
+Default value: none
 
 A cache engine to use for caching - see above.
