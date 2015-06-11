@@ -62,31 +62,24 @@ This maps the structure as follows.
 
 # Caching
 
-**smart-static** caches rendered templates. The build-in - and default - mechanism is to cache in memory.
+**smart-static** does not utilize build-in caching. Templates are just rebuild on every render. 
 
 ## Cache Engines
 
-If you do not want to cache in memory, these caching engines are currently available:
+If you want to use caching, these caching engines are currently available:
 
+- [smart-static-mem-cache](http://github.com/trenskow/smart-static-mem-cache.js)
 - [smart-static-fs-cache](http://github.com/trenskow/smart-static-fs-cache.js)
-- [smart-static-redis-cache](http://github.com/trenskow/smart-static-redis-cache.js)
+- smart-static-redis-cache (work in progress)
 
-Below is an example of how to use the file system engine.
+Below is an example of how to configure the memory cache engine.
 
-    var express = require('express');
-    var app = express();
-    
     var smartStatic = require('smart-static');
-    var jade = require('smart-static-jade');
-    var fsCache = require('smart-static-sf-cache');
+    var memCache = require('smart-static-sf-cache');
     
     app.use('/', smartStatic(__dirname + '/public', {
-        cache: fsCache({
-            cacheDir: __dirname + '/cache'
-        })
+        cache: memCache()
     }));
-    
-    app.listen(process.env.PORT || 3000);
 
 > See the readme of the individual cache plug-ins for usage.
 
