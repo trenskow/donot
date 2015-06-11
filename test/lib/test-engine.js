@@ -1,5 +1,3 @@
-var c;
-
 exports = module.exports = {
   map: {
     '.txt': '.test'
@@ -8,10 +6,6 @@ exports = module.exports = {
     cb(null, data);
   },
   render: function(url, data, opt, cb) {
-    c = opt.ctx;
     cb(null, data);
-  },
-  ctx: function() {
-    return c;
   }
 };
