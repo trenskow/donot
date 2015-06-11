@@ -6,8 +6,8 @@ var path = require('path');
 var expect = require('chai').expect;
 var request = require('supertest');
 var smartStatic = require('../');
-var TestEngine = require('./lib/test-engine');
-var MemCache = require('./lib/mem-cache');
+var testEngine = require('./lib/test-engine');
+var memCache = require('./lib/mem-cache');
 
 function createServer(engine) {
 
@@ -162,7 +162,7 @@ describe('smart-static', function() {
 
   describe('route', function() {
 
-    var engine = new TestEngine();
+    var engine = testEngine;
     var server;
     before(function() {
       server = createServer(engine);
@@ -241,10 +241,10 @@ describe('smart-static', function() {
 
   describe('cache', function() {
 
-    var cache = new MemCache();
+    var cache = memCache;
     before(function() {
       smartStatic(__dirname + '/data', {
-        engines: [new TestEngine()],
+        engines: [testEngine],
         cache: cache
       });
     });
