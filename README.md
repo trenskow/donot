@@ -1,16 +1,16 @@
 smart-static
-==========
+============
 
 An http, connect, express middleware that resembles the default express static route - but with the addition of template engine support and template render cache.
 
 ----
 
 Example usage with **express.js**
-    
+
     var express = require('express');
     var app = express();
     var smartStatic = require('smart-static');
-    
+
     app.use('/', smartStatic(__dirname + '/public'));
 
 ----
@@ -40,16 +40,16 @@ These can be served using http, connect or express.js like this.
 
     var express = require('express');
     var app = express();
-    
+
     var smartStatic = require('smart-static');
     var jade = require('smart-static-jade');
     var stylus = require('smart-static-stylus');
-    
+
     app.use('/', smartStatic(__dirname + '/public'));
-    
+
     smartStatic.engine(jade());
     smartStatic.engine(stylus());
-    
+
     app.listen(process.env.PORT || 3000);
 
 This maps the structure as follows.
@@ -62,7 +62,7 @@ This maps the structure as follows.
 
 # Caching
 
-**smart-static** does not utilize build-in caching. Templates are just rebuild on every render. 
+**smart-static** does not utilize build-in caching. Templates are just rebuild on every render.
 
 ## Cache Engines
 
@@ -76,7 +76,7 @@ Below is an example of how to configure the memory cache engine.
 
     var smartStatic = require('smart-static');
     var memCache = require('smart-static-sf-cache');
-    
+
     app.use('/', smartStatic(__dirname + '/public', {
         cache: memCache()
     }));
