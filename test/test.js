@@ -5,18 +5,20 @@ var fs = require('fs');
 var path = require('path');
 var expect = require('chai').expect;
 var request = require('supertest');
+var merge = require('merge');
 var smartStatic = require('../');
 var testEngine = require('./lib/test-engine');
 var memCache = require('./lib/mem-cache');
 
-function createServer(engine) {
+function createServer(engine, opt) {
 
   var cache = {};
-
-  var instance = smartStatic(__dirname + '/data', {
+  var options = merge(opt, {
     engines: [engine],
     index: ['index.html', 'index.txt']
   });
+
+  var instance = smartStatic(__dirname + '/data', options);
 
   return http.createServer(function(req, res) {
     instance(req, res, function(err) {
@@ -206,82 +208,134 @@ describe('smart-static', function() {
   describe('route', function() {
 
     var engine = testEngine;
-    var server;
-    before(function() {
-      server = createServer(engine);
+
+    describe('common', function() {
+
+      var server;
+      before(function() {
+        server = createServer(engine);
+      });
+
+      after(function() {
+        smartStatic.reset();
+      });
+
+      it ('should return 404 on not found', function(done) {
+        request(server)
+        .get('/not-found.txt')
+        .expect(404, 'not found', done);
+      });
+
+      it ('should return index on directory', function(done) {
+        request(server)
+        .get('/')
+        .expect(200, 'index test\n', done);
+      });
+
+      it ('should return 404 on non-existing files without extension', function(done) {
+        request(server)
+        .get('/static')
+        .expect(404, 'not found', done);
+      });
+
+      it ('should return 404 on non-GET requests', function(done) {
+        request(server)
+        .post('/static.txt')
+        .expect(404, 'not found', done);
+      });
+
+      it ('should return 200 on HEAD requests', function(done) {
+        request(server)
+        .head('/static.txt')
+        .expect(200, done);
+      });
+
+      it ('should send static files', function(done) {
+        request(server)
+        .get('/static.txt')
+        .expect('Content-Type', 'text/plain; charset=UTF-8')
+        .expect(200, 'This is a static file.\n', done);
+      });
+
+      it ('should send rendered template file', function(done) {
+        request(server)
+        .get('/template.txt')
+        .expect('Content-Type', 'text/plain; charset=UTF-8')
+        .expect(200, 'this is a template\ntest', done);
+      });
+
+      it ('should send rendered index template file', function(done) {
+        request(server)
+        .get('/sub')
+        .expect('Content-Type', 'text/plain; charset=UTF-8')
+        .expect(200, 'index\ntest', done);
+      });
+
     });
 
-    after(function() {
-      smartStatic.reset();
+    describe('restrictive', function() {
+
+      var server;
+      before(function() {
+        server = createServer(engine);
+      });
+
+      after(function() {
+        smartStatic.reset();
+      });
+
+      it ('should return 404 on hidden files', function(done) {
+        request(server)
+        .get('/.hidden.txt')
+        .expect(404, 'not found', done);
+      });
+
+      it ('should return 404 on hidden directories', function(done) {
+        request(server)
+        .get('/.hidden/test.txt')
+        .expect(404, 'not found', done);
+      });
+
+      it ('should return 404 on template files', function(done) {
+        request(server)
+        .get('/template.test')
+        .expect(404, 'not found', done);
+      });
+
     });
 
-    it ('should return 404 on not found', function(done) {
-      request(server)
-      .get('/not-found.txt')
-      .expect(404, 'not found', done);
-    });
+    describe('permissive', function() {
 
-    it ('should return index on directory', function(done) {
-      request(server)
-      .get('/')
-      .expect(200, 'index test\n', done);
-    });
+      var server;
+      before(function() {
+        server = createServer(engine, {
+          allowHidden: true,
+          allowTemplates: true
+        });
+      });
 
-    it ('should return 404 on hidden files', function(done) {
-      request(server)
-      .get('/.hidden.txt')
-      .expect(404, 'not found', done);
-    });
+      after(function() {
+        smartStatic.reset();
+      });
 
-    it ('should return 404 on hidden directories', function(done) {
-      request(server)
-      .get('/.hidden/test.txt')
-      .expect(404, 'not found', done);
-    });
+      it ('should send hidden files', function(done) {
+        request(server)
+        .get('/.hidden.txt')
+        .expect(200, 'hidden\n', done);
+      });
 
-    it ('should return 404 on template files', function(done) {
-      request(server)
-      .get('/template.test')
-      .expect(404, 'not found', done);
-    });
+      it ('should send file in hidden directories', function(done) {
+        request(server)
+        .get('/.hidden/test.txt')
+        .expect(200, 'hidden directory\n', done);
+      });
 
-    it ('should return 404 on non-existing files without extension', function(done) {
-      request(server)
-      .get('/static')
-      .expect(404, 'not found', done);
-    });
+      it ('should send template files', function(done) {
+        request(server)
+        .get('/template.test')
+        .expect(200, 'test this is a template\n', done);
+      });
 
-    it ('should return 404 on non-GET requests', function(done) {
-      request(server)
-      .post('/static.txt')
-      .expect(404, 'not found', done);
-    });
-
-    it ('should return 200 on HEAD requests', function(done) {
-      request(server)
-      .head('/static.txt')
-      .expect(200, done);
-    });
-
-    it ('should send static files', function(done) {
-      request(server)
-      .get('/static.txt')
-      .expect('Content-Type', 'text/plain; charset=UTF-8')
-      .expect(200, 'This is a static file.\n', done);
-    });
-
-    it ('should send rendered template file', function(done) {
-      request(server)
-      .get('/template.txt')
-      .expect('Content-Type', 'text/plain; charset=UTF-8')
-      .expect(200, 'this is a template test\n', done);
-    });
-
-    it ('should send rendered index template file', function(done) {
-      request(server)
-      .get('/sub')
-      .expect('Content-Type', 'text/plain; charset=UTF-8')
-      .expect(200, 'index test\n', done);
     });
 
   });
@@ -303,7 +357,7 @@ describe('smart-static', function() {
     it ('should compile and render template', function(done) {
       smartStatic.render('/template.txt', function(err, source, opt) {
         expect(err).to.be.null;
-        expect(source).to.equal('this is a template test\n');
+        expect(source).to.equal('this is a template\ntest');
         expect(opt).to.be.an('object');
         expect(opt.cache).to.be.false;
         done();
@@ -313,7 +367,7 @@ describe('smart-static', function() {
     it ('should render template from cache', function(done) {
       smartStatic.render('/template.txt', function(err, source, opt) {
         expect(err).to.be.null;
-        expect(source).to.equal('this is a template test\n');
+        expect(source).to.equal('this is a template\ntest');
         expect(opt).to.be.an('object');
         expect(opt.cache).to.be.true;
         done();
@@ -336,7 +390,7 @@ describe('smart-static', function() {
       it ('should recompile and render template', function(done) {
         smartStatic.render('/template.txt', function(err, source, opt) {
           expect(err).to.be.null;
-          expect(source).to.equal('this is a template test\n');
+          expect(source).to.equal('this is a template\ntest');
           expect(opt).to.be.an('object');
           expect(opt.cache).to.be.false;
           done();
