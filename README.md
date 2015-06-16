@@ -107,5 +107,5 @@ Currently these options are available.
 
 The plugin architecture of Smart Static makes it fairly easy to extend. See the below projects for more information.
 
-[smart-static-engine-template](https://github.com/trenskow/smart-static-engine-plugin-template) on how to implement template engines plug-ins.  
+[smart-static-template-engine-template](https://github.com/trenskow/smart-static-engine-plugin-template) on how to implement template engines plug-ins.  
 [smart-static-cache-template](https://github.com/trenskow/smart-static-cache-template) on how to implement cache plug-ins.
