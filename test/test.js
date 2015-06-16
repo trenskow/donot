@@ -6,143 +6,123 @@ var path = require('path');
 var expect = require('chai').expect;
 var request = require('supertest');
 var merge = require('merge');
-var smartStatic = require('../');
+var ssRoute = require('../');
+var SmartStatic = require('../').SmartStatic;
 var testEngine = require('./lib/test-engine');
 var memCache = require('./lib/mem-cache');
 
 function createServer(engine, opt) {
 
-  var cache = {};
   var options = merge(opt, {
     engines: [engine],
-    index: ['index.html', 'index.txt']
+    index: ['index.txt']
   });
 
-  var instance = smartStatic(__dirname + '/data', options);
-
-  return http.createServer(function(req, res) {
-    instance(req, res, function(err) {
-      res.statusCode = err ? (err.status || 500) : 404;
-      res.end(err ? err.stack : 'not found');
-    });
-  });
+  var instance = ssRoute(__dirname + '/data', options);
+  return http.createServer(instance);
 
 };
 
 describe('smart-static', function() {
+
   describe('constructing', function() {
 
     it ('should throw TypeError if root is not supplied', function() {
       expect(function() {
-        smartStatic();
+        new SmartStatic();
       }).to.throw(TypeError);
     });
 
     it ('should throw TypeError if root is not a string', function() {
       expect(function() {
-        smartStatic(1);
+        new SmartStatic(1);
       }).to.throw(TypeError);
     });
 
     it ('should throw TypeError if opt is not an object', function() {
       expect(function() {
-        smartStatic("", 1);
+        new SmartStatic("", 1);
       }).to.throw(TypeError);
     });
 
     it ('should throw Error if root does not exist', function() {
       expect(function() {
-        smartStatic(__dirname + '/not-exist');
+        new SmartStatic(__dirname + '/not-exist');
       }).to.throw(Error);
     });
 
     it ('should throw Error if root is not a directory', function() {
       expect(function() {
-        smartStatic(__dirname + '/data/static.txt');
+        new SmartStatic(__dirname + '/data/static.txt');
       }).to.throw(Error);
     });
 
-    it ('should throw TypeError if cache does not have a getCache function', function() {
+    it ('should throw TypeError if cache does not have a get function', function() {
       expect(function() {
-        smartStatic(__dirname + '/data/static.txt', {
+        new SmartStatic(__dirname + '/data/static.txt', {
           cache: {}
         });
       }).to.throw(TypeError);
     });
 
-    it ('should throw TypeError if cache does not have a setCache function', function() {
+    it ('should throw TypeError if cache does not have a set function', function() {
       expect(function() {
-        smartStatic(__dirname + '/data/static.txt', {
+        new SmartStatic(__dirname + '/data/static.txt', {
           cache: {
-            getCache: function() {}
+            get: function() {}
           }
         });
       }).to.throw(TypeError);
     });
 
-    it ('should return a function', function() {
-      expect(function() {
-        return smartStatic(__dirname + '/data');
-      }).to.be.a('function');
+    it ('should return an instance', function() {
+      expect(new SmartStatic(__dirname + '/data')).to.be.instanceof(SmartStatic);
     });
 
   });
 
   describe('adding engines', function() {
 
-    it ('should throw error when called prior to module initialization', function() {
-      expect(function() {
-        smartStatic.engine();
-      }).to.throw(Error);
+    var ss;
+    before(function() {
+      ss = new SmartStatic(__dirname + '/data');
     });
 
-    describe('after module initialization', function() {
+    it ('should throw TypeError on missing engine', function() {
+      expect(function() {
+        ss.engine();
+      }).to.throw(TypeError);
+    });
 
-      before(function() {
-        smartStatic(__dirname + '/data');
-      });
+    it ('should throw TypeError if engine is missing a map', function() {
+      expect(function() {
+        ss.engine({});
+      }).to.throw(TypeError);
+    });
 
-      after(function() {
-        smartStatic.reset();
-      });
+    it ('should throw TypeError if map is not an object', function() {
+      expect(function() {
+        ss.engine(1);
+      }).to.throw(TypeError);
+    });
 
-      it ('should throw TypeError on missing engine', function() {
-        expect(function() {
-          smartStatic.engine();
-        }).to.throw(TypeError);
-      });
+    it ('should throw TypeError if engine is missing compiler', function() {
+      expect(function() {
+        ss.engine({map:{'.test':'.txt'}});
+      }).to.throw(TypeError);
+    });
 
-      it ('should throw TypeError if engine is missing a map', function() {
-        expect(function() {
-          smartStatic.engine({});
-        }).to.throw(TypeError);
-      });
+    it ('should throw TypeError if compiler is not a function', function() {
+      expect(function() {
+        ss.engine({map:{'.test':'.txt'}, compiler: ''});
+      }).to.throw(TypeError);
 
-      it ('should throw TypeError if map is not an object', function() {
-        expect(function() {
-          smartStatic.engine(1);
-        }).to.throw(TypeError);
-      });
+    });
 
-      it ('should throw TypeError if engine is missing compiler', function() {
-        expect(function() {
-          smartStatic.engine({map:{'.test':'.txt'}});
-        }).to.throw(TypeError);
-      });
-
-      it ('should throw TypeError if compiler is not a function', function() {
-        expect(function() {
-          smartStatic.engine({map:{'.test':'.txt'}, compiler: ''});
-        }).to.throw(TypeError);
-
-      });
-
-      it ('should throw TypeError if render is not a function', function() {
-        expect(function() {
-          smartStatic.engine({map:{'.test':'.txt'}, compiler: function() {}, render: ''});
-        }).to.throw(TypeError);
-
-      });
+    it ('should throw TypeError if render is not a function', function() {
+      expect(function() {
+        ss.engine({map:{'.test':'.txt'}, compiler: function() {}, render: ''});
+      }).to.throw(TypeError);
 
     });
 
@@ -150,57 +130,45 @@ describe('smart-static', function() {
 
   describe('renderer', function() {
 
-    it ('should throw error when called prior to module initialization', function() {
-      expect(function() {
-        smartStatic.render();
-      }).to.throw(Error);
+    var ss;
+
+    before(function() {
+      ss = new SmartStatic(__dirname + '/data', {
+        engines: [testEngine]
+      });
     });
 
-    describe('after module initialization', function() {
+    it ('should throw TypeError if url is missing', function() {
+      expect(function() {
+        ss.render();
+      }).to.throw(TypeError);
+    });
 
-      before(function() {
-        smartStatic(__dirname + '/data', {
-          engines: [testEngine]
-        });
+    it ('should throw TypeError if url is not a string', function() {
+      expect(function() {
+        ss.render(1);
+      }).to.throw(TypeError);
+    });
+
+    it ('should throw TypeError if cb is missing', function() {
+      expect(function() {
+        ss.render('/');
+      }).to.throw(TypeError);
+    });
+
+    it ('should throw TypeError if cb is not a function', function() {
+      expect(function() {
+        ss.render('/', 1);
+      }).to.throw(TypeError);
+    });
+
+    it ('should render and callback with context', function(done) {
+      ss.render('/template.txt', 'cache', function(err, source, opt) {
+        expect(err).to.be.null;
+        expect(opt).to.be.an('object');
+        expect(opt.ctx).to.equal('cache');
+        done();
       });
-
-      after(function() {
-        smartStatic.reset();
-      });
-
-      it ('should throw TypeError if url is missing', function() {
-        expect(function() {
-          smartStatic.render();
-        }).to.throw(TypeError);
-      });
-
-      it ('should throw TypeError if url is not a string', function() {
-        expect(function() {
-          smartStatic.render(1);
-        }).to.throw(TypeError);
-      });
-
-      it ('should throw TypeError if cb is missing', function() {
-        expect(function() {
-          smartStatic.render('/');
-        }).to.throw(TypeError);
-      });
-
-      it ('should throw TypeError if cb is not a function', function() {
-        expect(function() {
-          smartStatic.render('/', 1);
-        }).to.throw(TypeError);
-      });
-
-      it ('should render and callback with context', function(done) {
-        smartStatic.render('/template.txt', 'cache', function(err, source, opt) {
-          expect(err).to.be.null;
-          expect(opt).to.be.an('object');
-          expect(opt.ctx).to.equal('cache');
-          done();
-        });
-      });
-
     });
 
   });
@@ -214,10 +182,6 @@ describe('smart-static', function() {
       var server;
       before(function() {
         server = createServer(engine);
-      });
-
-      after(function() {
-        smartStatic.reset();
       });
 
       it ('should return 404 on not found', function(done) {
@@ -280,10 +244,6 @@ describe('smart-static', function() {
         server = createServer(engine);
       });
 
-      after(function() {
-        smartStatic.reset();
-      });
-
       it ('should return 404 on hidden files', function(done) {
         request(server)
         .get('/.hidden.txt')
@@ -314,10 +274,6 @@ describe('smart-static', function() {
         });
       });
 
-      after(function() {
-        smartStatic.reset();
-      });
-
       it ('should send hidden files', function(done) {
         request(server)
         .get('/.hidden.txt')
@@ -342,20 +298,17 @@ describe('smart-static', function() {
 
   describe('cache', function() {
 
+    var ss;
     var cache = memCache;
     before(function() {
-      smartStatic(__dirname + '/data', {
+      ss = new SmartStatic(__dirname + '/data', {
         engines: [testEngine],
         cache: cache
       });
     });
 
-    after(function() {
-      smartStatic.reset();
-    });
-
     it ('should compile and render template', function(done) {
-      smartStatic.render('/template.txt', function(err, source, opt) {
+      ss.render('/template.txt', function(err, source, opt) {
         expect(err).to.be.null;
         expect(source).to.equal('this is a template\ntest');
         expect(opt).to.be.an('object');
@@ -365,7 +318,7 @@ describe('smart-static', function() {
     });
 
     it ('should render template from cache', function(done) {
-      smartStatic.render('/template.txt', function(err, source, opt) {
+      ss.render('/template.txt', function(err, source, opt) {
         expect(err).to.be.null;
         expect(source).to.equal('this is a template\ntest');
         expect(opt).to.be.an('object');
@@ -388,7 +341,7 @@ describe('smart-static', function() {
       });
 
       it ('should recompile and render template', function(done) {
-        smartStatic.render('/template.txt', function(err, source, opt) {
+        ss.render('/template.txt', function(err, source, opt) {
           expect(err).to.be.null;
           expect(source).to.equal('this is a template\ntest');
           expect(opt).to.be.an('object');
