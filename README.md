@@ -17,7 +17,7 @@ But being smart, it also support plug-ins for rendering templates - which means 
 Smart Static is created like this.
 
     var smartStatic = require('smart-static');
-
+    
     smartStatic(root, options)
 
 Returns a route to be used with Express, Connect or `http`.
@@ -27,16 +27,16 @@ Returns a route to be used with Express, Connect or `http`.
 Consider the following example.
 
     var http = require('http');
-
+    
     var smartStatic = require('smart-static');
-
+        
     var jade = require('smart-static-jade'); // Jade rendering engine.
     var stylus = require('smart-static-stylus'); // Stylus rendering engine.
-
+	
 	var server = http.createServer(smartStatic(__dirname + '/public', {
 		engines: [ jade(), stylus() ]
 	}));
-
+	
 	server.listen(8000);
 
 Now an http server is listening on port 8000 with the content of local directory `/public` being served at `http://localhost:8000/`.
@@ -68,19 +68,19 @@ As with engines - Smart Static also supports cache plug-ins.
 Below we have extended the above example with caching.
 
     var http = require('http');
-
+    
     var smartStatic = require('smart-static');
-
+    
     var jade = require('smart-static-jade'); // Jade rendering engine.
     var stylus = require('smart-static-stylus'); // Stylus rendering engine.
-
+    
     var memCache = require('smart-static-mem-cache'); // Memory cache
-
+	
 	var server = http.createServer(smartStatic(__dirname + '/public', {
 		engines: [ jade(), stylus() ],
 		cache: memCache()
 	}));
-
+	
 	server.listen(8000);
 
 Now all template renderings will be cached in memory and served from there - if the originating templates has not been modified.
@@ -95,8 +95,8 @@ Smart Static supports some options when creating - some of them you've already s
 
 Currently these options are available.
 
-| Option           | Type      | Dafault          |  |
-|------------------|-----------|------------------|--|
+| Option           | Type      | Dafault          | Description |
+|:-----------------|:----------|:-----------------|:------------|
 | `engine`         | `Array`   | None             | An array of template engines. |
 | `cache`          | `Object`  | None             | A cache plug-in to provide caching |
 | `index`          | `Array`   | `['index.html']` | An array of file names to be tested for and used - in prefered order - when directories are requested. |
