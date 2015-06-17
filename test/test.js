@@ -6,6 +6,7 @@ var path = require('path');
 var expect = require('chai').expect;
 var request = require('supertest');
 var merge = require('merge');
+var etag = require('etag');
 var ssRoute = require('../');
 var SmartStatic = require('../').SmartStatic;
 var testEngine = require('./lib/test-engine');
@@ -235,13 +236,55 @@ describe('smart-static', function() {
         .expect(200, 'index\ntest', done);
       });
 
+      describe('cache control', function() {
+
+        var headers;
+        before(function(done) {
+          (new SmartStatic(__dirname + '/data', {
+            engines: [engine]
+          })).render('/template.txt', function(err, data, opt) {
+            headers = {
+              lastModified: opt.modified,
+              etag: etag(data)
+            };
+            done();
+          });
+        });
+
+        it ('should have correct cache headers set', function(done) {
+          request(server)
+          .get('/template.txt')
+          .expect('Last-Modified', headers.lastModified.toUTCString())
+          .expect('Etag', headers.etag)
+          .expect(200, done);
+        });
+
+        it ('should return 304 on If-None-Match', function(done) {
+          request(server)
+          .get('/template.txt')
+          .set('If-None-Match', headers.etag)
+          .expect(304, done);
+        });
+
+        it ('should return 200 on non-matching If-None-Match', function(done) {
+          request(server)
+          .get('/template.txt')
+          .set('If-None-Match', 'non-matching-tag')
+          .expect(200, 'this is a template\ntest', done);
+        });
+
+      });
+
     });
 
     describe('restrictive', function() {
 
       var server;
       before(function() {
-        server = createServer(engine);
+        server = createServer(engine, {
+          etag: false,
+          lastModified: false
+        });
       });
 
       it ('should return 404 on hidden files', function(done) {
@@ -260,6 +303,20 @@ describe('smart-static', function() {
         request(server)
         .get('/template.test')
         .expect(404, 'not found', done);
+      });
+
+      it ('should not cache headers', function(done) {
+        request(server)
+        .get('/template.txt')
+        .expect(function(res) {
+          if (res.header['last-modified'] !== undefined) {
+            return "Last-Modified should not be set";
+          }
+          if (res.header["etag"] !== undefined) {
+            return "Etag should not be set";
+          }
+        })
+        .expect(200, done);
       });
 
     });
@@ -312,7 +369,7 @@ describe('smart-static', function() {
         expect(err).to.be.null;
         expect(source).to.equal('this is a template\ntest');
         expect(opt).to.be.an('object');
-        expect(opt.cache).to.be.false;
+        expect(opt.cached).to.be.false;
         done();
       });
     });
@@ -322,7 +379,7 @@ describe('smart-static', function() {
         expect(err).to.be.null;
         expect(source).to.equal('this is a template\ntest');
         expect(opt).to.be.an('object');
-        expect(opt.cache).to.be.true;
+        expect(opt.cached).to.be.true;
         done();
       });
     });
@@ -345,7 +402,7 @@ describe('smart-static', function() {
           expect(err).to.be.null;
           expect(source).to.equal('this is a template\ntest');
           expect(opt).to.be.an('object');
-          expect(opt.cache).to.be.false;
+          expect(opt.cached).to.be.false;
           done();
         });
       });

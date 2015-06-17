@@ -8,9 +8,9 @@ exports = module.exports = {
     cache[file] = data;
     cb();
   },
-  invalidate: function(created) {
+  invalidate: function(modified) {
     for (key in cache) {
-      cache[key].created = created;
+      cache[key].modified = modified;
     };
   }
 };

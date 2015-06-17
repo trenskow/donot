@@ -99,6 +99,8 @@ Currently these options are available.
 |:-----------------|:----------|:-----------------|:------------|
 | `engine`         | `Array`   | None             | An array of template engines. |
 | `cache`          | `Object`  | None             | A cache plug-in to provide caching |
+| `etag`           | `Boolean` | `true`           | Use Etag for HTTP cache control |
+| `lastModified`   | `Boolean` | `true`           | Send Last-Modified header. Uses file modification date. |
 | `index`          | `Array`   | `['index.html']` | An array of file names to be tested for and used - in prefered order - when directories are requested. |
 | `allowHidden`    | `Boolean` | `false`          | Allow acces to hidden (dot) files |
 | `allowTemplates` | `Boolean` | `false`          | Allow access to template files |
