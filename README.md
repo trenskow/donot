@@ -107,7 +107,6 @@ Currently these options are available.
 
 ## Customizing
 
-The plugin architecture of Smart Static makes it fairly easy to extend. See the below projects for more information.
+TODO
 
-[smart-static-template-engine-template](https://github.com/trenskow/smart-static-engine-plugin-template) on how to implement template engines plug-ins.  
-[smart-static-cache-template](https://github.com/trenskow/smart-static-cache-template) on how to implement cache plug-ins.
+In the meanwhile check how the [Jade](https://github.com/trenskow/smart-static-jade), [Stylus](https://github.com/trenskow/smart-static-stylus), [memory cache](https://github.com/trenskow/smart-static-mem-cache) and [file system cache](https://github.com/trenskow/smart-static-fs-cache) plug-ins are implemented.
