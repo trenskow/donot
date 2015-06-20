@@ -2,6 +2,8 @@
 smart-static
 ============
 
+[![Build Status](https://travis-ci.org/trenskow/smart-static.svg?branch=master)](https://travis-ci.org/trenskow/smart-static)
+
 A middleware inspired by [static-serve](https://github.com/expressjs/serve-static), but with support for automatic template rendering and caching.
 
 *Can be used as Express or Connect middleware - or with just plain `http`*.
