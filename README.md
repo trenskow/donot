@@ -1,4 +1,3 @@
-
 smart-static
 ============
 
@@ -53,19 +52,19 @@ But beyond serving static files it will automatically render templates when requ
 
 `index.html` and `images/my.png` are served as-is, but `about.jade` and `style/my.styl` are served as their rendered content - all automatically because of the engines added above.
 
-### Rendering engines
+# Rendering engines
 
 Currently [Jade](https://github.com/trenskow/smart-static-jade) and [Stylus](https://github.com/trenskow/smart-static-stylus) rendering engines are available.
 
 > See section "Customizing" below on how to implement your own engines.
 
-## Caching
+# Caching
 
 The build-in default of Smart Static is to just re-render the templates whenever they are requested. This might work with small websites with relative small amounts of users, but rendering can be a cumbersome task - so caching them is a good idea.
 
 As with engines - Smart Static also supports cache plug-ins.
 
-### Example
+## Example
 
 Below we have extended the above example with caching.
 
@@ -91,7 +90,7 @@ Currently a [memory](https://github.com/trenskow/smart-static-mem-cache) and [fi
 
 > See the "Customizing" section below on how to implement your own cache plug-ins.
 
-## Options
+# Options
 
 Smart Static supports some options when creating - some of them you've already seen practiced above - more specifically the `engines` and `cache` option.
 
@@ -107,8 +106,12 @@ Currently these options are available.
 | **allowHidden**    | Boolean | `false`          | Allow acces to hidden (dot) files |
 | **allowTemplates** | Boolean | `false`          | Allow access to template files |
 
-## Customizing
+# Customizing
 
 TODO
 
 In the meanwhile check how the [Jade](https://github.com/trenskow/smart-static-jade), [Stylus](https://github.com/trenskow/smart-static-stylus), [memory cache](https://github.com/trenskow/smart-static-mem-cache) and [file system cache](https://github.com/trenskow/smart-static-fs-cache) plug-ins are implemented.
+
+# License
+
+MIT
