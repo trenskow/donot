@@ -1,6 +1,6 @@
 {
   "name": "smart-static",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Like express.js static - but with template engine support.",
   "author": "Kristian Trenskow <trenskow@me.com>",
   "main": "index.js",

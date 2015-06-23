@@ -86,7 +86,7 @@ Below we have extended the above example with caching.
 
 Now all template renderings will be cached in memory and served from there - if the originating templates has not been modified.
 
-Currently a [memory](https://github.com/trenskow/smart-static-mem-cache) and [file system](https://github.com/trenskow/smart-static-fs-cache) cache plug-in are available - and a Redis plug-in is in progress.
+Currently a [memory](https://github.com/trenskow/smart-static-mem-cache), [file system](https://github.com/trenskow/smart-static-fs-cache) and [redis](https://github.com/trenskow/smart-static-redis-cache) cache plug-in are available.
 
 > See the "Customizing" section below on how to implement your own cache plug-ins.
 
