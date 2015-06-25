@@ -54,7 +54,7 @@ But beyond serving static files it will automatically render templates when requ
 
 # Rendering engines
 
-Currently [Jade](https://github.com/trenskow/smart-static-jade) and [Stylus](https://github.com/trenskow/smart-static-stylus) rendering engines are available.
+Currently [Jade](https://github.com/trenskow/smart-static-jade) and [Stylus](https://github.com/trenskow/smart-static-stylus) rendering engines are available. Also a [minifier](https://github.com/trenskow/smart-static-minify) engine is available.
 
 > See section "Customizing" below on how to implement your own engines.
 
