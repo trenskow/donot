@@ -126,6 +126,26 @@ describe('smart-static', function() {
       }).to.throw(TypeError);
     });
 
+    it ('should throw a TypeError if accessControl.deny contains non-string or non-regexp', function() {
+      expect(function() {
+        new SmartStatic('', {
+          accessControl: {
+            deny: [true]
+          }
+        });
+      }).to.throw(TypeError);
+    });
+
+    it ('should throw a TypeError if accessControl.allow contains non-string or non-regexp', function() {
+      expect(function() {
+        new SmartStatic('', {
+          accessControl: {
+            allow: [true]
+          }
+        });
+      }).to.throw(TypeError);
+    });
+
     it ('should return an instance', function() {
       expect(new SmartStatic(__dirname + '/data')).to.be.instanceof(SmartStatic);
     });
