@@ -76,6 +76,56 @@ describe('smart-static', function() {
       }).to.throw(TypeError);
     });
 
+    it('should throw a TypeError if accessControl is not an object', function() {
+      expect(function() {
+        new SmartStatic('', {
+          accessControl: true
+        });
+      }).to.throw(TypeError);
+    });
+
+    it ('should throw a TypeError if both allow and deny is set on accessControl', function() {
+      expect(function() {
+        new SmartStatic('', {
+          accessControl: {
+            allow: [],
+            deny: []
+          }
+        })
+      }).to.throw(TypeError);
+    })
+
+    it ('should throw a TypeError if accessControl.allow isn\'t an array', function() {
+      expect(function() {
+        new SmartStatic('', {
+          accessControl: {
+            allow: true
+          }
+        });
+      }).to.throw(TypeError);
+    });
+
+    it ('should throw a TypeError if accessControl.deny isn\'t an array', function() {
+      expect(function() {
+        new SmartStatic('', {
+          accessControl: {
+            deny: true
+          }
+        });
+      }).to.throw(TypeError);
+    });
+
+    it ('should throw a TypeError if accessControl.statusCode isn\'t a number', function() {
+      expect(function() {
+        new SmartStatic('', {
+          accessControl: {
+            deny: [],
+            statusCode: true
+          }
+        });
+      }).to.throw(TypeError);
+    });
+
     it ('should return an instance', function() {
       expect(new SmartStatic(__dirname + '/data')).to.be.instanceof(SmartStatic);
     });
