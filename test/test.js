@@ -115,17 +115,6 @@ describe('smart-static', function() {
       }).to.throw(TypeError);
     });
 
-    it ('should throw a TypeError if accessControl.statusCode isn\'t a number', function() {
-      expect(function() {
-        new SmartStatic('', {
-          accessControl: {
-            deny: [],
-            statusCode: true
-          }
-        });
-      }).to.throw(TypeError);
-    });
-
     it ('should throw a TypeError if accessControl.deny contains non-string or non-regexp', function() {
       expect(function() {
         new SmartStatic('', {
