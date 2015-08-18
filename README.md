@@ -103,6 +103,7 @@ Currently these options are available.
 | **etag**           | Boolean | `true`           | Use Etag for HTTP cache control |
 | **lastModified**   | Boolean | `true`           | Send Last-Modified header. Uses file or template modification date. |
 | **index**          | Array   | `['index.html']` | An array of file names to be tested for and used - in prefered order - when directories are requested. |
+| **serveDir**       | String  | '/'              | Serve files from a subdirectory. |
 | **allowHidden**    | Boolean | `false`          | Allow acces to hidden (dot) files |
 | **allowTemplates** | Boolean | `false`          | Allow access to template files |
 | **accessControl**  | Object  | None             | Specify access (*see section Access Control*) |

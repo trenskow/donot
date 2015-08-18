@@ -76,6 +76,14 @@ describe('smart-static', function() {
       }).to.throw(TypeError);
     });
 
+    it ('should throw a TypeError if serveDir is not a string', function() {
+      expect(function() {
+        new SmartStatic('', {
+          serveDir: true
+        });
+      }).to.throw(TypeError);
+    });
+
     it('should throw a TypeError if accessControl is not an object', function() {
       expect(function() {
         new SmartStatic('', {
@@ -293,6 +301,29 @@ describe('smart-static', function() {
         .get('/sub')
         .expect('Content-Type', 'text/plain; charset=UTF-8')
         .expect(200, 'index\ntest', done);
+      });
+
+      describe('serveDir', function() {
+
+        var server;
+        before(function() {
+          server = createServer(engine, {
+            serveDir: '/test'
+          });
+        });
+
+        it ('should come back with 404 if not in path', function(done) {
+          request(server)
+          .get('/template.txt')
+          .expect(404, done);
+        });
+
+        it ('should come back with 200 if in path', function(done) {
+          request(server)
+          .get('/test/template.txt')
+          .expect(200, 'this is a template\ntest', done);
+        })
+
       });
 
       describe('cache control', function() {
