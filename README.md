@@ -105,6 +105,26 @@ Currently these options are available.
 | **index**          | Array   | `['index.html']` | An array of file names to be tested for and used - in prefered order - when directories are requested. |
 | **allowHidden**    | Boolean | `false`          | Allow acces to hidden (dot) files |
 | **allowTemplates** | Boolean | `false`          | Allow access to template files |
+| **accessControl**  | Object  | None             | Specify access (*see section Access Control*) |
+
+# Access Control
+
+Besides the `allowHidden` and `allowTemplates` options, Smart Static also supports more fine-grained control through the `accessControl` option.
+
+An example below.
+
+    {
+        accessControl: {
+            deny: [
+            	'.ext',
+            	/^.*?\.ext2$/
+            ]
+        }
+    }
+
+The above example denies access to files with the `.ext` extension or with filenames that match the regular expression `^.?\.ext2$` - all other files are allowed. If you replace `deny` with `allow` it turns around - allowing only the files specified and denying all others.
+
+The array can contain strings which match file extensions, or regular expressions which are matched against the entire filename.
 
 # Customizing
 
