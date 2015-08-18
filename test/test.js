@@ -336,76 +336,150 @@ describe('smart-static', function() {
 
     });
 
-    describe('restrictive', function() {
+    describe('access', function() {
 
-      var server;
-      before(function() {
-        server = createServer(engine, {
-          etag: false,
-          lastModified: false
+      describe('hidden files', function() {
+
+        describe('restrictive', function() {
+
+          var server;
+          before(function() {
+            server = createServer(engine, {
+              etag: false,
+              lastModified: false
+            });
+          });
+
+          it ('should return 404 on hidden files', function(done) {
+            request(server)
+            .get('/.hidden.txt')
+            .expect(404, 'not found', done);
+          });
+
+          it ('should return 404 on hidden directories', function(done) {
+            request(server)
+            .get('/.hidden/test.txt')
+            .expect(404, 'not found', done);
+          });
+
+          it ('should return 404 on template files', function(done) {
+            request(server)
+            .get('/template.test')
+            .expect(404, 'not found', done);
+          });
+
+          it ('should not cache headers', function(done) {
+            request(server)
+            .get('/template.txt')
+            .expect(function(res) {
+              if (res.header['last-modified'] !== undefined) {
+                return "Last-Modified should not be set";
+              }
+              if (res.header["etag"] !== undefined) {
+                return "Etag should not be set";
+              }
+            })
+            .expect(200, done);
+          });
+
         });
-      });
 
-      it ('should return 404 on hidden files', function(done) {
-        request(server)
-        .get('/.hidden.txt')
-        .expect(404, 'not found', done);
-      });
+        describe('permissive', function() {
 
-      it ('should return 404 on hidden directories', function(done) {
-        request(server)
-        .get('/.hidden/test.txt')
-        .expect(404, 'not found', done);
-      });
+          var server;
+          before(function() {
+            server = createServer(engine, {
+              allowHidden: true,
+              allowTemplates: true
+            });
+          });
 
-      it ('should return 404 on template files', function(done) {
-        request(server)
-        .get('/template.test')
-        .expect(404, 'not found', done);
-      });
+          it ('should send hidden files', function(done) {
+            request(server)
+            .get('/.hidden.txt')
+            .expect(200, 'hidden\n', done);
+          });
 
-      it ('should not cache headers', function(done) {
-        request(server)
-        .get('/template.txt')
-        .expect(function(res) {
-          if (res.header['last-modified'] !== undefined) {
-            return "Last-Modified should not be set";
-          }
-          if (res.header["etag"] !== undefined) {
-            return "Etag should not be set";
-          }
-        })
-        .expect(200, done);
-      });
+          it ('should send file in hidden directories', function(done) {
+            request(server)
+            .get('/.hidden/test.txt')
+            .expect(200, 'hidden directory\n', done);
+          });
 
-    });
+          it ('should send template files', function(done) {
+            request(server)
+            .get('/template.test')
+            .expect(200, 'test this is a template\n', done);
+          });
 
-    describe('permissive', function() {
-
-      var server;
-      before(function() {
-        server = createServer(engine, {
-          allowHidden: true,
-          allowTemplates: true
         });
+
       });
 
-      it ('should send hidden files', function(done) {
-        request(server)
-        .get('/.hidden.txt')
-        .expect(200, 'hidden\n', done);
-      });
+      describe('access control', function() {
 
-      it ('should send file in hidden directories', function(done) {
-        request(server)
-        .get('/.hidden/test.txt')
-        .expect(200, 'hidden directory\n', done);
-      });
+        describe('deny', function() {
 
-      it ('should send template files', function(done) {
-        request(server)
-        .get('/template.test')
-        .expect(200, 'test this is a template\n', done);
+          var server;
+          before(function() {
+            server = createServer(testEngine, {
+              accessControl: {
+                deny: ['.txt']
+              }
+            });
+          });
+
+          it ('should come back with 404', function(done) {
+            request(server)
+            .get('/index.txt')
+            .expect(404, done);
+          });
+
+          it ('should come back with 404', function(done) {
+            request(server)
+            .get('/template.txt')
+            .expect(404, done);
+          });
+
+          it ('should come back with 200', function(done) {
+            request(server)
+            .get('/test.allow')
+            .expect(200, 'allow this\n', done);
+          });
+
+        });
+
+        describe('allow', function() {
+
+          var server;
+          before(function() {
+            server = createServer(testEngine, {
+              accessControl: {
+                allow: ['.allow']
+              }
+            });
+          });
+
+          it ('should come back with 404', function(done) {
+            request(server)
+            .get('/index.txt')
+            .expect(404, done);
+          });
+
+          it ('should come back with 404', function(done) {
+            request(server)
+            .get('/template.txt')
+            .expect(404, done);
+          });
+
+          it ('should come back with 200', function(done) {
+            request(server)
+            .get('/test.allow')
+            .expect(200, 'allow this\n', done);
+          });
+
+        });
+
       });
 
     });
