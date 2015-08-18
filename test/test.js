@@ -418,7 +418,7 @@ describe('smart-static', function() {
 
       describe('access control', function() {
 
-        describe('deny', function() {
+        describe('deny (String - file ext)', function() {
 
           var server;
           before(function() {
@@ -449,13 +449,13 @@ describe('smart-static', function() {
 
         });
 
-        describe('allow', function() {
+        describe('allow (RegExp)', function() {
 
           var server;
           before(function() {
             server = createServer(testEngine, {
               accessControl: {
-                allow: ['.allow']
+                allow: [/^.*?\.allow$/]
               }
             });
           });
