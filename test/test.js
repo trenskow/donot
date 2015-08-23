@@ -174,6 +174,18 @@ describe('smart-static', function() {
       }).to.throw(TypeError);
     });
 
+    it ('should throw TypeError if map value is not a string', function() {
+      expect(function() {
+        ss.engine({map: {'test': false}, compile: function() {}});
+      }).to.throw(TypeError);
+    });
+
+    it ('should throw TypeError if key value is `\'\'`', function() {
+      expect(function() {
+        ss.engine({map: {'': '.myext'}, compile: function() {}});
+      }).to.throw(TypeError);
+    });
+
     it ('should throw TypeError if engine is missing compiler', function() {
       expect(function() {
         ss.engine({map:{'.test':'.txt'}});
@@ -191,7 +203,6 @@ describe('smart-static', function() {
       expect(function() {
         ss.engine({map:{'.test':'.txt'}, compiler: function() {}, render: ''});
       }).to.throw(TypeError);
-
     });
 
   });
