@@ -1,10 +1,10 @@
-var SmartStatic = require('./lib/smart-static');
+var Donot = require('./lib/donot');
 
 // We expose a route instead of the actual class.
 exports = module.exports = function(root, opt) {
-  var smartStatic = new SmartStatic(root, opt);
-  return smartStatic.route.bind(smartStatic);
+  var donot = new Donot(root, opt);
+  return donot.route.bind(donot);
 };
 
 // Expose class as well
-exports.SmartStatic = SmartStatic;
+exports.Donot = Donot;

@@ -1,3 +1,5 @@
+/*jshint expr: true*/
+
 'use strict';
 
 var http = require('http');
@@ -8,7 +10,7 @@ var request = require('supertest');
 var merge = require('merge');
 var etag = require('etag');
 var ssRoute = require('../');
-var SmartStatic = require('../').SmartStatic;
+var Donot = require('../').Donot;
 var testEngine = require('./lib/test-engine');
 var memCache = require('./lib/mem-cache');
 
@@ -22,45 +24,45 @@ function createServer(engine, opt) {
   var instance = ssRoute(__dirname + '/data', options);
   return http.createServer(instance);
 
-};
+}
 
-describe('smart-static', function() {
+describe('Donot', function() {
 
   describe('constructing', function() {
 
     it ('should throw TypeError if root is not supplied', function() {
       expect(function() {
-        new SmartStatic();
+        new Donot();
       }).to.throw(TypeError);
     });
 
     it ('should throw TypeError if root is not a string', function() {
       expect(function() {
-        new SmartStatic(1);
+        new Donot(1);
       }).to.throw(TypeError);
     });
 
     it ('should throw TypeError if opt is not an object', function() {
       expect(function() {
-        new SmartStatic("", 1);
+        new Donot("", 1);
       }).to.throw(TypeError);
     });
 
     it ('should throw Error if root does not exist', function() {
       expect(function() {
-        new SmartStatic(__dirname + '/not-exist');
+        new Donot(__dirname + '/not-exist');
       }).to.throw(Error);
     });
 
     it ('should throw Error if root is not a directory', function() {
       expect(function() {
-        new SmartStatic(__dirname + '/data/static.txt');
+        new Donot(__dirname + '/data/static.txt');
       }).to.throw(Error);
     });
 
     it ('should throw TypeError if cache does not have a get function', function() {
       expect(function() {
-        new SmartStatic(__dirname + '/data/static.txt', {
+        new Donot(__dirname + '/data/static.txt', {
           cache: {}
         });
       }).to.throw(TypeError);
@@ -68,7 +70,7 @@ describe('smart-static', function() {
 
     it ('should throw TypeError if cache does not have a set function', function() {
       expect(function() {
-        new SmartStatic(__dirname + '/data/static.txt', {
+        new Donot(__dirname + '/data/static.txt', {
           cache: {
             get: function() {}
           }
@@ -78,7 +80,7 @@ describe('smart-static', function() {
 
     it ('should throw a TypeError if serveDir is not a string', function() {
       expect(function() {
-        new SmartStatic('', {
+        new Donot('', {
           serveDir: true
         });
       }).to.throw(TypeError);
@@ -86,7 +88,7 @@ describe('smart-static', function() {
 
     it('should throw a TypeError if accessControl is not an object', function() {
       expect(function() {
-        new SmartStatic('', {
+        new Donot('', {
           accessControl: true
         });
       }).to.throw(TypeError);
@@ -94,18 +96,18 @@ describe('smart-static', function() {
 
     it ('should throw a TypeError if both allow and deny is set on accessControl', function() {
       expect(function() {
-        new SmartStatic('', {
+        new Donot('', {
           accessControl: {
             allow: [],
             deny: []
           }
-        })
+        });
       }).to.throw(TypeError);
-    })
+    });
 
     it ('should throw a TypeError if accessControl.allow isn\'t an array', function() {
       expect(function() {
-        new SmartStatic('', {
+        new Donot('', {
           accessControl: {
             allow: true
           }
@@ -115,7 +117,7 @@ describe('smart-static', function() {
 
     it ('should throw a TypeError if accessControl.deny isn\'t an array', function() {
       expect(function() {
-        new SmartStatic('', {
+        new Donot('', {
           accessControl: {
             deny: true
           }
@@ -125,7 +127,7 @@ describe('smart-static', function() {
 
     it ('should throw a TypeError if accessControl.deny contains non-string or non-regexp', function() {
       expect(function() {
-        new SmartStatic('', {
+        new Donot('', {
           accessControl: {
             deny: [true]
           }
@@ -135,7 +137,7 @@ describe('smart-static', function() {
 
     it ('should throw a TypeError if accessControl.allow contains non-string or non-regexp', function() {
       expect(function() {
-        new SmartStatic('', {
+        new Donot('', {
           accessControl: {
             allow: [true]
           }
@@ -144,7 +146,7 @@ describe('smart-static', function() {
     });
 
     it ('should return an instance', function() {
-      expect(new SmartStatic(__dirname + '/data')).to.be.instanceof(SmartStatic);
+      expect(new Donot(__dirname + '/data')).to.be.instanceof(Donot);
     });
 
   });
@@ -153,7 +155,7 @@ describe('smart-static', function() {
 
     var ss;
     before(function() {
-      ss = new SmartStatic(__dirname + '/data');
+      ss = new Donot(__dirname + '/data');
     });
 
     it ('should throw TypeError on missing engine', function() {
@@ -212,7 +214,7 @@ describe('smart-static', function() {
     var ss;
 
     before(function() {
-      ss = new SmartStatic(__dirname + '/data', {
+      ss = new Donot(__dirname + '/data', {
         engines: [testEngine]
       });
     });
@@ -333,7 +335,7 @@ describe('smart-static', function() {
           request(server)
           .get('/test/template.txt')
           .expect(200, 'this is a template\ntest', done);
-        })
+        });
 
       });
 
@@ -341,7 +343,7 @@ describe('smart-static', function() {
 
         var headers;
         before(function(done) {
-          (new SmartStatic(__dirname + '/data', {
+          (new Donot(__dirname + '/data', {
             engines: [engine]
           })).render('/template.txt', function(err, data, opt) {
             headers = {
@@ -417,7 +419,7 @@ describe('smart-static', function() {
               if (res.header['last-modified'] !== undefined) {
                 return "Last-Modified should not be set";
               }
-              if (res.header["etag"] !== undefined) {
+              if (res.header.etag !== undefined) {
                 return "Etag should not be set";
               }
             })
@@ -533,7 +535,7 @@ describe('smart-static', function() {
     var ss;
     var cache = memCache;
     before(function() {
-      ss = new SmartStatic(__dirname + '/data', {
+      ss = new Donot(__dirname + '/data', {
         engines: [testEngine],
         cache: cache
       });

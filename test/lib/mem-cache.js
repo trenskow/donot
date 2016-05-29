@@ -9,8 +9,8 @@ exports = module.exports = {
     cb();
   },
   invalidate: function(modified) {
-    for (key in cache) {
+    for (var key in cache) {
       cache[key].modified = modified;
-    };
+    }
   }
 };

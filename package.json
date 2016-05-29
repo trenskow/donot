@@ -1,12 +1,12 @@
 {
-  "name": "smart-static",
-  "version": "1.1.5",
-  "description": "Like express.js static - but with template engine support.",
+  "name": "donot",
+  "version": "1.0.0",
+  "description": "Static file server with build-in JIT compiler.",
   "author": "Kristian Trenskow <trenskow@me.com>",
   "main": "index.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/trenskow/smart-static"
+    "url": "https://github.com/trenskow/donot"
   },
   "dependencies": {
     "send": "^0.12.3",
