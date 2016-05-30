@@ -1,3 +1,5 @@
+'use strict';
+
 var Donot = require('./lib/donot');
 
 // We expose a route instead of the actual class.

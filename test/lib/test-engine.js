@@ -1,3 +1,5 @@
+'use strict';
+
 var fs = require('fs');
 
 /// Simple engine for testing
