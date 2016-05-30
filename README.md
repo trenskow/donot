@@ -1,7 +1,7 @@
 donot
 =====
 
-[![Build Status](https://travis-ci.org/trenskow/donot.svg?branch=master)](https://travis-ci.org/trenskow/donot)
+[![Build Status](https://travis-ci.org/donotjs/donot.svg?branch=master)](https://travis-ci.org/donotjs/donot)
 
 A middleware inspired by [static-serve](https://github.com/expressjs/serve-static), but with support for JIT compilation.
 
@@ -18,7 +18,7 @@ But being smart, it also support plug-ins for rendering templates - which means 
 *donot* is created like this.
 
     var donot = require('donot');
-    
+
     donot(root, options)
 
 Returns a route to be used with Express, Connect or `http`.
@@ -28,16 +28,16 @@ Returns a route to be used with Express, Connect or `http`.
 Consider the following example.
 
     var http = require('http');
-    
+
     var donot = require('donot');
-    
+
 	var server = http.createServer(donot(__dirname + '/public', {
 		engines: [
 		    require('donot-jade'), // Jade rendering engine.
 		    require('donot-stylus') // Stylus rendering engine.
 		]
 	}));
-	
+
 	server.listen(8000);
 
 Now an http server is listening on port 8000 with the content of local directory `/public` being served at `http://localhost:8000/`.
@@ -54,7 +54,7 @@ But beyond serving static files it will automatically render templates when requ
 
 # Rendering engines
 
-Currently [Jade](https://github.com/trenskow/donot-jade) and [Stylus](https://github.com/trenskow/donot-stylus) rendering engines are available. Also a [minifier](https://github.com/trenskow/donot-minify) engine is available.
+Currently [Jade](https://github.com/donotjs/donot-jade) and [Stylus](https://github.com/donotjs/donot-stylus) rendering engines are available. Also a [minifier](https://github.com/donotjs/donot-minify) engine is available.
 
 > See section "Customizing" below on how to implement your own engines.
 
@@ -69,24 +69,24 @@ As with engines - *donot* also supports cache plug-ins.
 Below we have extended the above example with caching.
 
     var http = require('http');
-    
+
     var donot = require('donot');
-    
+
     var jade = require('donot-jade'); // Jade rendering engine.
     var stylus = require('donot-stylus'); // Stylus rendering engine.
-    
+
     var memCache = require('donot-mem-cache'); // Memory cache
-	
+
 	var server = http.createServer(donot(__dirname + '/public', {
 		engines: [ jade(), stylus() ],
 		cache: memCache()
 	}));
-	
+
 	server.listen(8000);
 
 Now all template renderings will be cached in memory and served from there - if the originating templates has not been modified.
 
-Currently a [memory](https://github.com/trenskow/donot-cache-memory), [file system](https://github.com/trenskow/donot-cache-filesystem) and [redis](https://github.com/trenskow/donot-cache-redis) cache plug-in are available.
+Currently a [memory](https://github.com/donotjs/donot-cache-memory), [file system](https://github.com/donotjs/donot-cache-filesystem) and [redis](https://github.com/donotjs/donot-cache-redis) cache plug-in are available.
 
 > See the "Customizing" section below on how to implement your own cache plug-ins.
 
@@ -131,7 +131,7 @@ The array can contain strings which match file extensions, or regular expression
 
 TODO
 
-In the meanwhile check how the [Jade](https://github.com/trenskow/donot-engine-jade), [Stylus](https://github.com/trenskow/donot-engine-stylus), [memory cache](https://github.com/trenskow/donot-cache-memory), [file system cache](https://github.com/trenskow/donot-cache-filesystem) and [Redis cache](https://github.com/trenskow/donot-cache-redis) plug-ins are implemented.
+In the meanwhile check how the [Jade](https://github.com/donotjs/donot-engine-jade), [Stylus](https://github.com/donotjs/donot-engine-stylus), [memory cache](https://github.com/donotjs/donot-cache-memory), [file system cache](https://github.com/donotjs/donot-cache-filesystem) and [Redis cache](https://github.com/donotjs/donot-cache-redis) plug-ins are implemented.
 
 # License
 
