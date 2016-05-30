@@ -9,7 +9,7 @@ A middleware inspired by [static-serve](https://github.com/expressjs/serve-stati
 
 # How it Works
 
-*donut* is an engine. Build-in is the ability to serve static files, just like static files - being able to serve a local directory as a directory of an http server.
+*donot* is an engine. Build-in is the ability to serve static files, just like static files - being able to serve a local directory as a directory of an http server.
 
 But being smart, it also support plug-ins for rendering templates - which means it automatically compiles and renders local templates - and/or transforms files from eg. ES6 to ES5.
 
