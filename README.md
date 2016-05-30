@@ -86,7 +86,7 @@ Below we have extended the above example with caching.
 
 Now all template renderings will be cached in memory and served from there - if the originating templates has not been modified.
 
-Currently a [memory](https://github.com/trenskow/donot-mem-cache), [file system](https://github.com/trenskow/donot-fs-cache) and [redis](https://github.com/trenskow/donot-redis-cache) cache plug-in are available.
+Currently a [memory](https://github.com/trenskow/donot-cache-memory), [file system](https://github.com/trenskow/donot-cache-filesystem) and [redis](https://github.com/trenskow/donot-cache-redis) cache plug-in are available.
 
 > See the "Customizing" section below on how to implement your own cache plug-ins.
 
