@@ -131,7 +131,7 @@ The array can contain strings which match file extensions, or regular expression
 
 TODO
 
-In the meanwhile check how the [Jade](https://github.com/trenskow/donot-jade), [Stylus](https://github.com/trenskow/donot-stylus), [memory cache](https://github.com/trenskow/donot-mem-cache) and [file system cache](https://github.com/trenskow/donot-fs-cache) plug-ins are implemented.
+In the meanwhile check how the [Jade](https://github.com/trenskow/donot-engine-jade), [Stylus](https://github.com/trenskow/donot-engine-stylus), [memory cache](https://github.com/trenskow/donot-cache-memory), [file system cache](https://github.com/trenskow/donot-cache-filesystem) and [Redis cache](https://github.com/trenskow/donot-cache-redis) plug-ins are implemented.
 
 # License
 
