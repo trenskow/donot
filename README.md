@@ -11,7 +11,7 @@ A middleware inspired by [static-serve](https://github.com/expressjs/serve-stati
 
 *donot* is an engine. Build-in is the ability to serve static files, just like static files - being able to serve a local directory as a directory of an http server.
 
-But being smart, it also support plug-ins for rendering templates - which means it automatically compiles and renders local templates - and/or transforms files from eg. ES6 to ES5.
+But being smart, it also supports plug-ins for transforming files - which means it automatically compiles and renders local templates, and/or transforms files (eg. ES6 to ES5, Stylus to CSS or pug to HTML).
 
 ## Usage
 
@@ -31,10 +31,13 @@ Consider the following example.
 
     var donot = require('donot');
 
+    var PugTransform = require('donot-transform-pug');
+    var StylusTransform = require('donor-transform-stylus');
+
 	var server = http.createServer(donot(__dirname + '/public', {
-		engines: [
-		    require('donot-jade'), // Jade rendering engine.
-		    require('donot-stylus') // Stylus rendering engine.
+		transform: [
+		    new PugTransform(),
+		    new StylusTransform()
 		]
 	}));
 
@@ -47,22 +50,22 @@ But beyond serving static files it will automatically render templates when requ
     /public/index.html      as     http://localhost:8000/index.html
     /public/images/my.png   as     http://localhost:8000/images/my.png
     ----
-    /public/about.jade      as     http://localhost:8000/about.html
+    /public/about.pug       as     http://localhost:8000/about.html
     /public/style/my.styl   as     http://localhost:8000/style/my.css
 
-`index.html` and `images/my.png` are served as-is, but `about.jade` and `style/my.styl` are served as their rendered content - all automatically because of the engines added above.
+`index.html` and `images/my.png` are served as-is, but `about.pug` and `style/my.styl` are served as their rendered content - all automatically because of the transforms added above.
 
-# Rendering engines
+# Transforms
 
-Currently [Jade](https://github.com/donotjs/donot-jade) and [Stylus](https://github.com/donotjs/donot-stylus) rendering engines are available. Also a [minifier](https://github.com/donotjs/donot-minify) engine is available.
+Currently [pug](https://github.com/donotjs/donot-transform-pug) and [Stylus](https://github.com/donotjs/donot-transform-stylus) transforms are available. Also a [minifier](https://github.com/donotjs/donot-transform-minify) transform is available.
 
-> See section "Customizing" below on how to implement your own engines.
+> See section "Customizing" below on how to implement your own transforms.
 
 # Caching
 
-The build-in default of *donot* is to just re-render the templates whenever they are requested. This might work with small websites with relative small amounts of users, but rendering can be a cumbersome task - so caching them is a good idea.
+The build-in default of *donot* is to just re-transform files whenever they are requested. This might work with small websites with relative small amounts of users, but transforming can be an expensive task - so caching them is a good idea.
 
-As with engines - *donot* also supports cache plug-ins.
+As with transforms - *donot* also supports cache plug-ins.
 
 ## Example
 
@@ -72,19 +75,19 @@ Below we have extended the above example with caching.
 
     var donot = require('donot');
 
-    var jade = require('donot-jade'); // Jade rendering engine.
-    var stylus = require('donot-stylus'); // Stylus rendering engine.
+    var PugTransform = require('donot-transform-pug');
+    var StylusTransform = require('donot-transform-stylus');
 
-    var memCache = require('donot-mem-cache'); // Memory cache
+    var MemoryCache = require('donot-cache-memory');
 
 	var server = http.createServer(donot(__dirname + '/public', {
-		engines: [ jade(), stylus() ],
-		cache: memCache()
+		transforms: [ new PugTransform(), new StylusTransform() ],
+		cache: new MemoryCache()
 	}));
 
 	server.listen(8000);
 
-Now all template renderings will be cached in memory and served from there - if the originating templates has not been modified.
+Now all transformed files will be cached in memory and served from there - if the source files has not been modified.
 
 Currently a [memory](https://github.com/donotjs/donot-cache-memory), [file system](https://github.com/donotjs/donot-cache-filesystem) and [redis](https://github.com/donotjs/donot-cache-redis) cache plug-in are available.
 
@@ -92,20 +95,20 @@ Currently a [memory](https://github.com/donotjs/donot-cache-memory), [file syste
 
 # Options
 
-*donot* supports some options when creating - some of them you've already seen practiced above - more specifically the `engines` and `cache` option.
+*donot* supports some options - some of them you've already seen practiced above - more specifically the `transforms` and `cache` option.
 
 Currently these options are available.
 
 | Option             | Type      | Dafault          | Description |
 |:-------------------|:----------|:-----------------|:------------|
-| **engine**         | Array   | None             | An array of template engines. |
+| **transforms**     | Array   | None             | An array of transforms. |
 | **cache**          | Object  | None             | A cache plug-in to provide caching |
 | **etag**           | Boolean | `true`           | Use Etag for HTTP cache control |
-| **lastModified**   | Boolean | `true`           | Send Last-Modified header. Uses file or template modification date. |
+| **lastModified**   | Boolean | `true`           | Send Last-Modified header. Uses source file or transformed files modification date. |
 | **index**          | Array   | `['index.html']` | An array of file names to be tested for and used - in prefered order - when directories are requested. |
 | **serveDir**       | String  | '/'              | Serve files from a subdirectory. |
-| **allowHidden**    | Boolean | `false`          | Allow acces to hidden (dot) files |
-| **allowTemplates** | Boolean | `false`          | Allow access to template files |
+| **allowDotFiles**  | Boolean | `false`          | Allow access to hidden (dot) files. |
+| **allowTemplates** | Boolean | `false`          | Allow access to template files. |
 | **accessControl**  | Object  | None             | Specify access (*see section Access Control*) |
 
 # Access Control
@@ -119,7 +122,7 @@ An example below.
             deny: [
             	'.ext',
             	/^.*?\.ext2$/
-            ]
+            ],
         }
     }
 
@@ -129,9 +132,7 @@ The array can contain strings which match file extensions, or regular expression
 
 # Customizing
 
-TODO
-
-In the meanwhile check how the [Jade](https://github.com/donotjs/donot-engine-jade), [Stylus](https://github.com/donotjs/donot-engine-stylus), [memory cache](https://github.com/donotjs/donot-cache-memory), [file system cache](https://github.com/donotjs/donot-cache-filesystem) and [Redis cache](https://github.com/donotjs/donot-cache-redis) plug-ins are implemented.
+See [Transform](https://github.com/donotjs/donot-transform) or [Cache](https://github.com/donotjs/donot-cache).
 
 # License
 
