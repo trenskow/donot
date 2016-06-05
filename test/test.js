@@ -15,6 +15,7 @@ var MemoryCache = require('@donotjs/donot-cache-memory');
 var ssRoute = require('../');
 var Donot = require('../').Donot;
 var TestTransform = require('./lib/test-transform');
+var ReverseTransform = require('./lib/reverse-transform');
 
 chai.should();
 chai.use(chaiAsPromised);
@@ -23,7 +24,11 @@ function createServer(transform, opt) {
 
 	var options = merge(opt, {});
 
-	options.transforms = [transform];
+	if (transform.constructor.name !== 'Array') {
+		transform = [transform];
+	}
+
+	options.transforms = transform;
 	options.index = ['index.txt'];
 
 	var instance = ssRoute(__dirname + '/data', options);
@@ -189,13 +194,14 @@ describe('Donot', function() {
 
 	describe('route', function() {
 
-		var transform = new TestTransform();
+		var testTransform = new TestTransform();
+		var reverseTransform = new ReverseTransform();
 
 		describe('common', function() {
 
 			var server;
 			before(function() {
-				server = createServer(transform);
+				server = createServer([reverseTransform, testTransform]);
 			});
 
 			it ('should return 404 on not found', function(done) {
@@ -242,6 +248,13 @@ describe('Donot', function() {
 				.expect(200, 'this is a template\ntest', done);
 			});
 
+			it ('should send chained rendered template file', function(done) {
+				request(server)
+				.get('/template.reversed.txt')
+				.expect('Content-Type', 'text/plain; charset=UTF-8')
+				.expect(200, 'tset\netalpmet a si siht', done);
+			});
+
 			it ('should send rendered index template file', function(done) {
 				request(server)
 				.get('/sub')
@@ -253,7 +266,7 @@ describe('Donot', function() {
 
 				var server;
 				before(function() {
-					server = createServer(transform, {
+					server = createServer(testTransform, {
 						serveDir: '/test'
 					});
 				});
@@ -277,7 +290,7 @@ describe('Donot', function() {
 				var headers;
 				before(function(done) {
 					(new Donot(__dirname + '/data', {
-						transforms: [transform]
+						transforms: [testTransform]
 					})).render('/template.txt').then((result) => {
 						headers = {
 							lastModified: result.modificationDate,
@@ -321,7 +334,7 @@ describe('Donot', function() {
 
 					var server;
 					before(function() {
-						server = createServer(transform, {
+						server = createServer(testTransform, {
 							etag: false,
 							lastModified: false
 						});
@@ -365,7 +378,7 @@ describe('Donot', function() {
 
 					var server;
 					before(function() {
-						server = createServer(transform, {
+						server = createServer(testTransform, {
 							dotFiles: true,
 							templates: true
 						});
@@ -399,7 +412,7 @@ describe('Donot', function() {
 
 					var server;
 					before(function() {
-						server = createServer(transform, {
+						server = createServer(testTransform, {
 							accessControl: {
 								deny: ['.txt']
 							}
@@ -430,7 +443,7 @@ describe('Donot', function() {
 
 					var server;
 					before(function() {
-						server = createServer(transform, {
+						server = createServer(testTransform, {
 							accessControl: {
 								allow: [/^.*?\.allow$/]
 							}
