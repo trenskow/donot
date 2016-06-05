@@ -20,26 +20,11 @@ class TestTransform extends Transform {
 		return filename.replace(/\.txt$/i, '.test');
 	}
 
-	compile(srcFilename, destFilename) {
-		return new Promise((resolved, rejected) => {
-			fs.readFile(srcFilename, 'utf8', (err, data) => {
-				if (err) return rejected(err);
-				fs.writeFile(destFilename, data.substr(5), 'utf8', (err) => {
-					if (err) return rejected(err);
-					resolved({
-						files: [srcFilename]
-					});
-				});
-			});
+	compile(filename, data) {
+		return Promise.resolve({
+			data: new Buffer(data.toString().substr(5) + 'test'),
+			files: [filename]
 		});
-	}
-
-	needsRendering() {
-		return true;
-	}
-
-	render(compiledData, options) {
-		return new Promise.resolve(compiledData + 'test');
 	}
 
 }

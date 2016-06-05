@@ -177,11 +177,11 @@ describe('Donot', function() {
 			});
 		});
 
-		it ('should throw TypeError if url is missing', function() {
+		it ('should throw TypeError if file name is missing', function() {
 			return ss.render().should.eventually.be.rejected;
 		});
 
-		it ('should throw TypeError if url is not a string', function() {
+		it ('should throw TypeError if file name is not a string', function() {
 			return ss.render(1).should.eventually.be.rejected;
 		});
 
@@ -280,7 +280,7 @@ describe('Donot', function() {
 						transforms: [transform]
 					})).render('/template.txt').then((result) => {
 						headers = {
-							lastModified: result.options.modified,
+							lastModified: result.modificationDate,
 							etag: etag(result.data)
 						};
 						done();
@@ -477,18 +477,16 @@ describe('Donot', function() {
 		it ('should compile and render template', function() {
 			return ss.render('/template.txt').then((result) => {
 				expect(result).to.be.an('object');
-				expect(result.data).to.equal('this is a template\ntest');
-				expect(result.ctx).to.be.an('object');
-				expect(result.options.cached).to.be.false;
+				expect(result.data.toString()).to.equal('this is a template\ntest');
+				expect(result.cached).to.be.false;
 			}).should.eventually.be.fulfilled;
 		});
 
 		it ('should render template from cache', function() {
 			return ss.render('/template.txt').then((result) => {
 				expect(result).to.be.an('object');
-				expect(result.data).to.equal('this is a template\ntest');
-				expect(result.options).to.be.an('object');
-				expect(result.options.cached).to.be.true;
+				expect(result.data.toString()).to.equal('this is a template\ntest');
+				expect(result.cached).to.be.true;
 			}).should.eventually.be.fulfilled;
 		});
 
@@ -500,7 +498,7 @@ describe('Donot', function() {
 					expect(err).to.be.null;
 					var date = stats.mtime;
 					date.setFullYear(date.getFullYear() - 1);
-					cache.invalidate(date);
+					cache.cache['/template.txt'].modificationDate = date;
 					done();
 				});
 			});
@@ -508,9 +506,8 @@ describe('Donot', function() {
 			it ('should recompile and render template', function() {
 				return ss.render('/template.txt').then((result) => {
 					expect(result).to.be.an('object');
-					expect(result.data).to.equal('this is a template\ntest');
-					expect(result.options).to.be.an('object');
-					expect(result.options.cached).to.be.false;
+					expect(result.data.toString()).to.equal('this is a template\ntest');
+					expect(result.cached).to.be.false;
 				});
 			});
 
