@@ -8,11 +8,11 @@ var Transform = require('@donotjs/donot-transform');
 class ReverseTransform extends Transform {
 
 	canTransform(filename) {
-		return /\.reversed\.txt$/i.test(filename);
+		return /\.reversed\.([a-z]+)$/i.test(filename);
 	}
 
 	map(filename) {
-		return filename.replace(/\.reversed\.txt$/i, '.txt');
+		return filename.replace(/\.reversed\.([a-z]+)$/i, '.$1');
 	}
 
 	compile(filename, data) {

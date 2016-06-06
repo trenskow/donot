@@ -201,7 +201,7 @@ describe('Donot', function() {
 
 			var server;
 			before(function() {
-				server = createServer([reverseTransform, testTransform]);
+				server = createServer([testTransform, reverseTransform]);
 			});
 
 			it ('should return 404 on not found', function(done) {
