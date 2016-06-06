@@ -1,6 +1,6 @@
 {
   "name": "@donotjs/donot",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Grunt or Gulp alternative - serving static files in a web application - rendering and/or transforming and caching resources JIT.",
   "author": "Kristian Trenskow <trenskow@me.com>",
   "main": "index.js",
