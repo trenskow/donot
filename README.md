@@ -57,7 +57,7 @@ But beyond serving static files it will automatically render templates when requ
 
 # Transforms
 
-Currently [pug](https://github.com/donotjs/donot-transform-pug) and [Stylus](https://github.com/donotjs/donot-transform-stylus) transforms are available. Also a [minifier](https://github.com/donotjs/donot-transform-minify) transform is available.
+Currently [pug](https://github.com/donotjs/donot-transform-pug) and [Stylus](https://github.com/donotjs/donot-transform-stylus) transforms are available. Also a [minifier](https://github.com/donotjs/donot-transform-minify) and an [ES2015](https://github.com/donotjs/donot-transform-es5) transform is available.
 
 > See section "Customizing" below on how to implement your own transforms.
 
