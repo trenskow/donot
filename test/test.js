@@ -276,7 +276,7 @@ describe('Donot', () => {
 					request(server)
 					.get('/test.es5.min.js')
 					.expect('Content-Type', 'application/javascript; charset=UTF-8')
-					.expect(200, '"use strict";!function(){console.log("test")}();\n//# sourceMappingURL=test.es5.js', done);
+					.expect(200, '"use strict";!function(){console.log("test")}();\n//# sourceMappingURL=test.es5.min.js.map', done);
 				});
 
 				it ('should come back with a source map', (done) => {
