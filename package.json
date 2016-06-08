@@ -1,6 +1,6 @@
 {
   "name": "@donotjs/donot",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Grunt or Gulp alternative - serving static files in a web application - rendering and/or transforming and caching resources JIT.",
   "author": "Kristian Trenskow <trenskow@me.com>",
   "main": "index.js",
@@ -10,20 +10,25 @@
   },
   "dependencies": {
     "@donotjs/donot-cache": "^1.0.0",
-    "@donotjs/donot-transform": "^1.0.2",
+    "@donotjs/donot-transform": "^1.0.6",
+    "@donotjs/donot-transform-es5": "^1.0.2",
+    "@donotjs/donot-transform-minify": "^1.0.4",
     "async": "^1.2.1",
     "etag": "^1.7.0",
     "merge": "^1.2.0",
     "mime": "^1.3.4",
     "send": "^0.12.3",
-    "tmp": "0.0.28"
+    "sorcery": "^0.10.0"
   },
   "devDependencies": {
     "@donotjs/donot-cache-memory": "^1.0.0",
+    "@donotjs/donot-transform-es5": "^1.0.1",
+    "@donotjs/donot-transform-minify": "^1.0.3",
     "chai": "^3.0.0",
     "chai-as-promised": "^5.3.0",
     "mocha": "^2.2.5",
-    "supertest": "^1.0.1"
+    "supertest": "^1.0.1",
+    "tmp": "0.0.28"
   },
   "scripts": {
     "test": "mocha test/*"
