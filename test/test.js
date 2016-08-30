@@ -16,6 +16,7 @@ var ssRoute = require('../');
 var Donot = require('../').Donot;
 var TestTransform = require('./lib/test-transform');
 var ReverseTransform = require('./lib/reverse-transform');
+var utils = require('../lib/utils.js');
 
 chai.should();
 chai.use(chaiAsPromised);
@@ -537,7 +538,7 @@ describe('Donot', () => {
 					expect(err).to.be.null;
 					var date = stats.mtime;
 					date.setFullYear(date.getFullYear() - 1);
-					cache.cache['/template.txt'].modificationDate = date;
+					cache.cache[utils.hash({filename: '/template.txt'})].modificationDate = date;
 					done();
 				});
 			});
